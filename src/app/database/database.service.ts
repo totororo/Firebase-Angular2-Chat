@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseAuthState, FirebaseListObservable } from 'angularfire2';
 import { Subject } from 'rxjs/Subject';
+
 import { User } from '../object/user.object';
 import { Chat } from '../object/chat.object';
 

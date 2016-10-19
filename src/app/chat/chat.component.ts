@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { PushNotificationsService } from 'angular2-notifications';
+
 import { Chat } from '../object/chat.object';
 import { DatabaseService } from '../database/database.service';
 import { AppService } from '../app.service';
 import { User } from '../object/user.object';
-import { DatePipe } from '@angular/common';
-import { PushNotificationsService } from 'angular2-notifications';
 
 @Component({
   templateUrl: './chat.component.html',
@@ -58,15 +59,17 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         if (this.userProfiles[memo.uid] == undefined)
           this.databaseService.findUserById(memo.uid);
       });
+      if (chats.length > 0) {
+        // Push Notification.
+        let lastChat = this.chatItems[chats.length - 1];
+        let newMessage = lastChat.message;
 
-      // Push Notification.
-      let lastChat = this.chatItems[chats.length - 1];
-      let newMessage = lastChat.message;
-      if (this.appService.user.uid != lastChat.uid) {
-        this.pushNotificationService.create("New Message", { body: newMessage }).subscribe(
-          res => console.log(res),
-          err => console.log(err)
-        );
+        if (this.appService.user.uid != lastChat.uid) {
+          this.pushNotificationService.create("New Message", { body: newMessage }).subscribe(
+            res => console.log(res),
+            err => console.log(err)
+          );
+        }
       }
     });
   }

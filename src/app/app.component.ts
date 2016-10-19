@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { AppService } from './app.service';
 import { LoginService } from './auth/login.service';
 
@@ -9,8 +10,5 @@ import { LoginService } from './auth/login.service';
 })
 
 export class AppComponent {
-  title = 'app works!';
   constructor(private appService: AppService) { }
-
-
 }

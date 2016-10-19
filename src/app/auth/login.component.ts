@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FirebaseListObservable } from 'angularfire2';
+
 import { LoginService } from './login.service';
 import { DatabaseService } from '../database/database.service';
-import { FirebaseListObservable } from 'angularfire2';
 import { User } from '../object/user.object';
 import { AppService } from '../app.service';
-import { Router, ActivatedRoute } from '@angular/router';
+
 
 const MAIL = 1;
 const TWITTER = 2;
