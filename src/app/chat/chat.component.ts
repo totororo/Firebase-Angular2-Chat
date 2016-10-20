@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { PushNotificationsService } from 'angular2-notifications';
@@ -13,12 +13,15 @@ import { User } from '../object/user.object';
   styleUrls: ['./chat.component.css']
 })
 
-export class ChatComponent implements OnInit, AfterViewChecked {
+export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   chatItems: Array<Chat>;
   userChatItems: Array<Chat> = [];
   chatMessage: string = undefined;
   userProfiles = [];
+  allChatSubscrable = null;
+  userChatSubscrable = null;
+  userProfileSubscrable = null;
 
   constructor(private databaseService: DatabaseService,
     private appService: AppService,
@@ -33,11 +36,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     // user memo.
-    this.databaseService.userChats().subscribe(obj => {
+    this.userChatSubscrable = this.databaseService.userChats().subscribe(obj => {
       this.userChatItems = obj;
     });
 
-    this.databaseService.userProfiles().subscribe(user => {
+    this.userProfileSubscrable = this.databaseService.userProfiles().subscribe(user => {
       if (user == undefined || user.length == 0) return;
       this.userProfiles[user[0].uid] = user[0];
     });
@@ -50,28 +53,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.scrollToBottom();
-  }
-
-  private allChat() {
-    this.databaseService.getAllChat().subscribe(chats => {
-      this.chatItems = chats;
-      this.chatItems.forEach(memo => {
-        if (this.userProfiles[memo.uid] == undefined)
-          this.databaseService.findUserById(memo.uid);
-      });
-      if (chats.length > 0) {
-        // Push Notification.
-        let lastChat = this.chatItems[chats.length - 1];
-        let newMessage = lastChat.message;
-
-        if (this.appService.user.uid != lastChat.uid) {
-          this.pushNotificationService.create("New Message", { body: newMessage }).subscribe(
-            res => console.log(res),
-            err => console.log(err)
-          );
-        }
-      }
-    });
   }
 
   addChat() {
@@ -103,5 +84,43 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     } catch (err) { }
+  }
+
+  ngOnDestroy() {
+    if (this.userChatSubscrable) {
+      this.userChatSubscrable.unsubscribe();
+    }
+
+    if (this.allChatSubscrable) {
+      this.allChatSubscrable.unsubscribe();
+    }
+
+    if (this.userProfileSubscrable) {
+      this.userProfileSubscrable.unsubscribe();
+    }
+  }
+
+
+  private allChat() {
+    this.allChatSubscrable = this.databaseService.getAllChat().subscribe(chats => {
+      this.chatItems = chats;
+      this.chatItems.forEach(memo => {
+        if (this.userProfiles[memo.uid] == undefined)
+          this.databaseService.findUserById(memo.uid);
+      });
+      if (chats.length > 0) {
+        // Push Notification.
+        let lastChat = this.chatItems[chats.length - 1];
+        let newMessage = lastChat.message;
+        if (this.appService.user) {
+          if (this.appService.user.uid != lastChat.uid) {
+            this.pushNotificationService.create("New Message", { body: newMessage }).subscribe(
+              res => console.log(res),
+              err => console.log(err)
+            );
+          }
+        }
+      }
+    });
   }
 }

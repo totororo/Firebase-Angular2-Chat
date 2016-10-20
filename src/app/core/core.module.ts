@@ -1,4 +1,4 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { NgModule, Optional, SkipSelf, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,9 +10,9 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
 
 export const firebaseConfig = {
     // TODO : change your firebase configuration.
-    apiKey: '--',
-    authDomain: '--',
-    databaseURL: '--',
+    apiKey: '---',
+    authDomain: '---',
+    databaseURL: '---',
     storageBucket: '<YOUR_STORAGE>'
 }
 
@@ -34,7 +34,15 @@ export const firebaseConfig = {
 
 export class CoreModule {
     constractor( @Optional() @SkipSelf() parentModule: CoreModule) {
-        console.log("CoreModule constructor::");
         throwIfAlreadyLoaded(parentModule, 'CoreModule');
+    }
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: CoreModule,
+            providers: [
+                AppService
+            ]
+        };
     }
 }

@@ -11,7 +11,7 @@ import { LoginModule } from './auth/login.module';
     AppComponent
   ],
   imports: [
-    CoreModule,
+    CoreModule.forRoot(),
     ChatModule,
     LoginModule,
     FirebasememoRoutingModule,

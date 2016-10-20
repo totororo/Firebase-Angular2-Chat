@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FirebaseListObservable } from 'angularfire2';
 
@@ -20,7 +20,7 @@ const GITHUB = 5;
     styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
 
     titleMessage = undefined;
     userId = undefined;
@@ -31,9 +31,10 @@ export class LoginComponent {
     password = "demodemo";
     error = undefined;
     isRegister = false;
-
+    userProfileSubscribe = null;
     // test
     userItems: Array<User>;
+
     constructor(private loginService: LoginService,
         private databaseService: DatabaseService,
         private appService: AppService,
@@ -41,7 +42,7 @@ export class LoginComponent {
         private router: Router) {
         this.titleMessage = "Please Sign In";
 
-        this.databaseService.userProfiles().subscribe(obj => {
+        this.userProfileSubscribe = this.databaseService.userProfiles().subscribe(obj => {
             this.userItems = obj;
         });
 
@@ -150,9 +151,14 @@ export class LoginComponent {
         this.loginService.registerUser(this.email, this.password).then(result => {
             this.isRegister = false;
             this.titleMessage = "Register Success.";
-            console.log("register success: " + result);
         }).catch(error => {
             this.errorHandler(error);
         });
+    }
+
+    ngOnDestroy() {
+        if (this.userProfileSubscribe) {
+            this.userProfileSubscribe.unsubscribe();
+        }
     }
 }
