@@ -17,4 +17,4 @@ const routes: Routes = [
   providers: []
 })
 
-export class FirebasememoRoutingModule { }
+export class FirebaseChatRoutingModule { }

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { FirebasememoRoutingModule } from './app-routing.module';
+import { FirebaseChatRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
 import { AppComponent } from './app.component';
 import { ChatModule } from './chat/chat.module';
@@ -14,7 +14,7 @@ import { LoginModule } from './auth/login.module';
     CoreModule.forRoot(),
     ChatModule,
     LoginModule,
-    FirebasememoRoutingModule,
+    FirebaseChatRoutingModule,
   ],
   exports: [AppComponent],
   bootstrap: [AppComponent]

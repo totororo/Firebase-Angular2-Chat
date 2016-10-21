@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FirebaseListObservable } from 'angularfire2';
 
@@ -20,7 +20,7 @@ const GITHUB = 5;
     styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 
     titleMessage = undefined;
     userId = undefined;
@@ -40,6 +40,9 @@ export class LoginComponent implements OnDestroy {
         private appService: AppService,
         private route: ActivatedRoute,
         private router: Router) {
+    }
+
+    ngOnInit() {
         this.titleMessage = "Please Sign In";
 
         this.userProfileSubscribe = this.databaseService.userProfiles().subscribe(obj => {
